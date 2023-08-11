@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from multiprocessing import process
+from multiprocessing import Process
 from scapy.all import (ARP, Ether, conf, get_if_hwaddr, send, sniff, sndrcv, srp, wrpcap)
 
 import os, sys, time
@@ -32,10 +32,10 @@ class Arper:
         print("-"*30)
 
     def run(self):
-        self.poison_thread = process(target=self.poison)
+        self.poison_thread = Process(target=self.poison)
         self.poison_thread.start()
 
-        self.sniff_thread = process(target=self.sniff)
+        self.sniff_thread = Process(target=self.sniff)
         self.sniff_thread.start()
 
     def poison(self):
